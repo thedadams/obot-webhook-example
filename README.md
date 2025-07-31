@@ -32,7 +32,7 @@ go test -v
 
 ## Example Request
 
-The server expects a POST request to `/webhook` with:
+The server expects a POST request to `/` with:
 
 - **Header**: `X-Obot-Signature-256: sha256=<hmac-sha256-signature>`
 - **Body**: JSON payload matching the Message struct
