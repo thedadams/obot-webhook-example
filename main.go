@@ -5,14 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/zricethezav/gitleaks/v8/detect"
 )
 
 type Message struct {
@@ -37,54 +33,12 @@ func main() {
 		log.Fatal("WEBHOOK_SECRET environment variable is required")
 	}
 
-	detector, err := detect.NewDetectorDefaultConfig()
+	sd, err := newSecretDetector()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to create secret detector: %v", err)
 	}
 
-	http.HandleFunc("POST /", func(w http.ResponseWriter, r *http.Request) {
-		// Read the request body
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Failed to read request body", http.StatusBadRequest)
-			return
-		}
-		defer r.Body.Close()
-
-		// Get the signature from the header
-		signature := r.Header.Get("X-Obot-Signature-256")
-		if signature == "" {
-			http.Error(w, "Missing X-Obot-Signature-256 header", http.StatusBadRequest)
-			return
-		}
-
-		// Validate the signature
-		if !validateSignature(body, signature, secret) {
-			http.Error(w, "Invalid signature", http.StatusBadRequest)
-			return
-		}
-
-		// Parse the JSON payload
-		var message Message
-		if err := json.Unmarshal(body, &message); err != nil {
-			http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
-			return
-		}
-
-		findings := detector.DetectBytes(message.Params)
-		if len(findings) > 0 {
-			log.Printf("found some secrets: %+v", findings)
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write(fmt.Appendf(nil, "found %d suspected secrets", len(findings)))
-			return
-		}
-
-		// Log the received message (optional)
-		log.Printf("Received valid webhook: Method=%s, ID=%v", message.Method, message.ID)
-
-		// Return success
-		_, _ = w.Write([]byte("Webhook received successfully"))
-	})
+	http.HandleFunc("POST /secrets-detector", newHTTPHandler(sd, "Secrets Detector", secret))
 
 	port := os.Getenv("PORT")
 	if port == "" {
