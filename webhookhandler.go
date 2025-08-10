@@ -43,7 +43,7 @@ func newHTTPHandler(wh webhookHandler, name, webhookValidatingSecret string) htt
 		}
 
 		// Log the received message (optional)
-		log.Printf("Received webhook: Method=%s, ID=%v", message.Method, message.ID)
+		log.Printf("Received webhook for %s: Method=%s, ID=%v", name, message.Method, message.ID)
 
 		// Handle the webhook message
 		if err := wh.handleWebhook(r.Context(), message); err != nil {
