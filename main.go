@@ -39,6 +39,7 @@ func main() {
 	}
 
 	http.HandleFunc("POST /secrets-detector", newHTTPHandler(sd, "Secrets Detector", secret))
+	http.HandleFunc("POST /phrase-detector", newHTTPHandler(newPhraseDetector(os.Getenv("WEBHOOK_PHRASE")), "Webhook Phrase", secret))
 
 	port := os.Getenv("PORT")
 	if port == "" {

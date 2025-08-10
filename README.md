@@ -16,12 +16,17 @@ A simple HTTP server in Go that validates webhook signatures using HMAC-SHA256.
    export WEBHOOK_SECRET="your-secret-key"
    ```
 
-2. Run the server:
+2. Optionally, you can specify a phrase to use the phrase detector for testing:
+   ```bash
+   export WEBHOOK_PHRASE="phrase to fail on if detected"
+   ```
+
+3. Run the server:
    ```bash
    go run .
    ```
 
-3. The server will start on port 8082 by default. You can change this by setting the `PORT` environment variable.
+4. The server will start on port 8082 by default. You can change this by setting the `PORT` environment variable.
 
 ## Testing
 
@@ -32,7 +37,7 @@ go test -v
 
 ## Example Request
 
-The server expects a POST request to `/secrets-detector` with:
+The server expects a POST request to `/secrets-detector` or `/phrase-detector` with:
 
 - **Header**: `X-Obot-Signature-256: sha256=<hmac-sha256-signature>`
 - **Body**: JSON payload matching the Message struct
