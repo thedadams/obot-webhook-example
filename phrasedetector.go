@@ -8,22 +8,26 @@ import (
 )
 
 type phraseDetector struct {
-	phrase []byte
+	phrases [][]byte
 }
 
-func newPhraseDetector(phrase string) *phraseDetector {
+func newPhraseDetector(phrases []string) *phraseDetector {
+	ps := make([][]byte, len(phrases))
+	for i := range phrases {
+		ps[i] = []byte(strings.ToLower(strings.TrimSpace(phrases[i])))
+	}
 	return &phraseDetector{
-		phrase: []byte(strings.ToLower(phrase)),
+		phrases: ps,
 	}
 }
 
 func (pd *phraseDetector) handleWebhook(_ context.Context, message Message) error {
-	if len(pd.phrase) == 0 {
-		return nil
-	}
-
-	if bytes.Contains(bytes.ToLower(message.Params), pd.phrase) {
-		return fmt.Errorf("found phrase %q in message", pd.phrase)
+	for _, phrase := range pd.phrases {
+		if len(phrase) != 0 {
+			if bytes.Contains(bytes.ToLower(message.Params), phrase) {
+				return fmt.Errorf("found phrase %q in message", phrase)
+			}
+		}
 	}
 
 	return nil

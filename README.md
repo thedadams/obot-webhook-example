@@ -16,9 +16,9 @@ A simple HTTP server in Go that validates webhook signatures using HMAC-SHA256.
    export WEBHOOK_SECRET="your-secret-key"
    ```
 
-2. Optionally, you can specify a phrase to use the phrase detector for testing:
+2. Optionally, you can specify a comma-delimited list of phrases to use the phrase detector for testing:
    ```bash
-   export WEBHOOK_PHRASE="phrase to fail on if detected"
+   export WEBHOOK_PHRASES="phrase to fail on if detected,another phrase"
    ```
 
 3. Run the server:
