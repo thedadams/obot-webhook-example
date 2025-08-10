@@ -37,7 +37,7 @@ func main() {
 		log.Fatal("WEBHOOK_SECRET environment variable is required")
 	}
 
-	detector, err  := detect.NewDetectorDefaultConfig()
+	detector, err := detect.NewDetectorDefaultConfig()
 	if err != nil {
 		panic(err)
 	}
@@ -75,7 +75,7 @@ func main() {
 		if len(findings) > 0 {
 			log.Printf("found some secrets: %+v", findings)
 			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(fmt.Sprintf("found %d suspected secrets", len(findings))))
+			_, _ = w.Write(fmt.Appendf(nil, "found %d suspected secrets", len(findings)))
 			return
 		}
 
