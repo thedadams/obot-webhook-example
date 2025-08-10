@@ -25,7 +25,12 @@ func newSecretDetector() (*secretDetector, error) {
 func (sd *secretDetector) handleWebhook(_ context.Context, message Message) error {
 	findings := sd.detector.DetectBytes(message.Params)
 	if len(findings) > 0 {
-		return fmt.Errorf("found some secrets: %+v", findings)
+		return fmt.Errorf("found some secrets in message parameters: %+v", findings)
+	}
+
+	findings = sd.detector.DetectBytes(message.Result)
+	if len(findings) > 0 {
+		return fmt.Errorf("found some secrets in message result: %+v", findings)
 	}
 	return nil
 }

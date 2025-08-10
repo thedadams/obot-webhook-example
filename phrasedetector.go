@@ -25,7 +25,11 @@ func (pd *phraseDetector) handleWebhook(_ context.Context, message Message) erro
 	for _, phrase := range pd.phrases {
 		if len(phrase) != 0 {
 			if bytes.Contains(bytes.ToLower(message.Params), phrase) {
-				return fmt.Errorf("found phrase %q in message", phrase)
+				return fmt.Errorf("found phrase %q in message parameters", phrase)
+			}
+
+			if bytes.Contains(bytes.ToLower(message.Result), phrase) {
+				return fmt.Errorf("found phrase %q in message result", phrase)
 			}
 		}
 	}
