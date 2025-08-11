@@ -47,7 +47,7 @@ func newHTTPHandler(wh webhookHandler, name, webhookValidatingSecret string) htt
 
 		// Handle the webhook message
 		if err := wh.handleWebhook(r.Context(), message); err != nil {
-			fmt.Printf("webhook %s faled: %v\n", name, err)
+			fmt.Printf("webhook %s failed: %v\n", name, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
